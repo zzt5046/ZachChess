@@ -7,9 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 
-public class ChessBoardView extends JFrame {
+public class ChessBoard extends JFrame implements MouseListener {
 
     private static final int SIDE_WIDTH = 1024;
     private static final int SQUARE_WIDTH = SIDE_WIDTH / 8;
@@ -17,24 +16,24 @@ public class ChessBoardView extends JFrame {
     private static final Color DARK = new Color(87, 58, 46);
     private static final Color LIGHT = new Color(138, 120, 93);
 
-    private boolean flipped = false;
+    private boolean flipped;
     private static ChessPosition position;
-    private static ChessBoardModel model;
     private static Graphics2D g2d = null;
 
-    public ChessBoardView(){
+    public ChessBoard(){
         this(false);
     }
 
-    public ChessBoardView(boolean flipped){
+    public ChessBoard(boolean flipped){
 
+        this.flipped = flipped;
         position = new ChessPosition(flipped);
-        model = new ChessBoardModel();
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(SIDE_WIDTH, SIDE_WIDTH);
         this.setLocationRelativeTo(null);
         this.setUndecorated(true);
+        this.addMouseListener(this);
         this.setVisible(true);
 
     }
@@ -67,7 +66,7 @@ public class ChessBoardView extends JFrame {
 
     private void drawPieces(){
         ChessPiece piece = null;
-        String[][] model = position.getModel();
+        String[][] model = position.getArray();
 
         int x = SQUARE_WIDTH/8;
         int y = SQUARE_WIDTH/8;
@@ -76,9 +75,9 @@ public class ChessBoardView extends JFrame {
             for(int j = 0; j < 8; j++){
                 piece = PieceUtil.notationToPiece(model[i][j]);
                 if(piece != null){
-                    BufferedImage icon = piece.getIcon();
-                    if(i == 1 || i == 7)
+                    if(i == 1 || i == 7){
                         x += 2;
+                    }
                     g2d.drawImage(piece.getIcon(), null, x, y);
                 }
                 x += SQUARE_WIDTH;
@@ -98,4 +97,30 @@ public class ChessBoardView extends JFrame {
         drawBoard();
         drawPieces();
     }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        try{
+            String square = BoardUtil.getSquareClicked(e.getX(), e.getY(), flipped);
+            System.out.println("square: " + square);
+
+            int[] coords = PieceUtil.arrayPosFromNotation(square);
+            System.out.println("array coords: [" + coords[0] + "] [" + coords[1] + "]");
+
+            String[][] arr = position.getArray();
+            ChessPiece piece = PieceUtil.notationToPiece(arr[coords[0]][coords[1]]);
+            System.out.println(piece.getPieceColor() + " " + piece.getPieceType());
+        }catch (Exception ex){
+            ex.printStackTrace();
+            System.exit(0);
+        }
+    }
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+    @Override
+    public void mouseExited(MouseEvent e) {}
 }

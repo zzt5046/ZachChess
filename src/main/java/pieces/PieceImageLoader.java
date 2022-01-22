@@ -1,2 +1,4 @@
-package pieces;public class PieceImageLoader {
+package pieces;
+
+public class PieceImageLoader {
 }

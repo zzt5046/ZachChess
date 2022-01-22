@@ -1,10 +1,10 @@
 package app;
-import board.ChessBoardView;
+import board.ChessBoard;
 
 public class Chess {
 
     public static void main(String [] args){
-        new ChessBoardView();
+        new ChessBoard();
     }
 
 }
